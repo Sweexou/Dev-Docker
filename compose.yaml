@@ -1,0 +1,34 @@
+services:
+  front:
+    build: ./front
+    ports:
+      - "127.0.0.1:3000:80"
+    depends_on:
+      - api
+    networks:
+      - game-network
+
+  api:
+    build: ./api
+    environment:
+      GAME_SERVER_URL: http://game-server:4000
+      DATABASE_PATH: /data/quiz.db
+    volumes:
+      - quiz-data:/data
+    depends_on:
+      - game-server
+    networks:
+      - game-network
+
+  game-server:
+    build: ./game-server
+    environment:
+      PORT: "4000"
+    networks:
+      - game-network
+
+networks:
+  game-network:
+
+volumes:
+  quiz-data:
