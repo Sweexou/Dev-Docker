@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz Docker</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px system-ui, sans-serif; color: #20252b; background: #f5f7fa; }
+    header { background: #fff; border-bottom: 1px solid #dce2e8; }
+    header div, main { max-width: 1100px; margin: auto; padding: 24px; }
+    header div { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    h1 { margin: 0; font-size: 28px; }
+    h2 { font-size: 21px; margin: 0 0 16px; }
+    main { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px; }
+    section, aside { min-width: 0; }
+    label { display: block; }
+    input[type=text] { width: 100%; max-width: 360px; padding: 12px; margin: 8px 0 24px; border: 1px solid #aebac6; border-radius: 4px; font: inherit; }
+    fieldset { padding: 20px 0; margin: 0; border: 0; border-bottom: 1px solid #dce2e8; min-width: 0; }
+    legend { font-weight: 600; padding: 0; width: 100%; overflow-wrap: anywhere; }
+    fieldset label { display: flex; align-items: baseline; gap: 10px; padding: 10px 0; cursor: pointer; overflow-wrap: anywhere; }
+    input[type=radio] { flex: none; accent-color: #087ea4; }
+    button { margin-top: 20px; min-height: 44px; padding: 10px 18px; border: 0; border-radius: 4px; background: #087ea4; color: #fff; font: inherit; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: wait; }
+    button:focus-visible, input:focus-visible { outline: 3px solid #d58c16; outline-offset: 3px; }
+    .error { color: #b42318; }
+    .correction { font-size: 14px; line-height: 1.6; margin: 8px 0; }
+    .correct { color: #146c43; }
+    .incorrect { color: #b42318; }
+    #result { padding: 24px 0; }
+    #result strong { font-size: 26px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
+    th, td { text-align: left; padding: 12px 6px; border-bottom: 1px solid #dce2e8; overflow-wrap: anywhere; }
+    th:first-child { width: 40px; }
+    th:last-child { width: 65px; text-align: right; }
+    td:last-child { text-align: right; }
+    .muted { color: #596674; font-size: 14px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 720px) { main { grid-template-columns: 1fr; gap: 32px; padding: 20px; } }
+  </style>
+</head>
+<body>
+  <header><div><h1>Quiz Docker</h1><span id="quiz-summary" class="muted">20 questions &middot; 20 points</span></div></header>
+  <main>
+    <section aria-label="Quiz">
+      <form id="quiz-form">
+        <label for="player">Ton pseudo</label>
+        <input id="player" name="player" type="text" maxlength="50" autocomplete="nickname" required>
+        <p id="loading" role="status">Chargement des questions...</p>
+        <div id="questions"></div>
+        <button id="submit" type="submit" disabled>Valider mes reponses</button>
+      </form>
+      <p id="error" class="error" role="alert"></p>
+      <button id="retry" type="button" hidden>Recharger les questions</button>
+      <div id="result" role="status" hidden></div>
+      <button id="replay" type="button" hidden>Rejouer</button>
+    </section>
+    <aside aria-labelledby="leaderboard-title">
+      <h2 id="leaderboard-title">Classement</h2>
+      <p id="ranking-status" class="muted" role="status"></p>
+      <table>
+        <thead><tr><th scope="col">#</th><th scope="col">Joueur</th><th scope="col">Score</th></tr></thead>
+        <tbody id="ranking"></tbody>
+      </table>
+      <button id="refresh" type="button">Actualiser</button>
+    </aside>
+  </main>
+  <script>
+    const form = document.getElementById("quiz-form");
+    const questions = document.getElementById("questions");
+    const submit = document.getElementById("submit");
+    const error = document.getElementById("error");
+    const result = document.getElementById("result");
+    const replay = document.getElementById("replay");
+    const retry = document.getElementById("retry");
+    let quiz;
+
+    async function request(url, options) {
+      const response = await fetch(url, { ...options, signal: AbortSignal.timeout(10000) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "La requete a echoue");
+      return data;
+    }
+
+    async function loadQuiz() {
+      submit.disabled = true;
+      retry.hidden = true;
+      replay.hidden = true;
+      result.hidden = true;
+      result.textContent = "";
+      error.textContent = "";
+      questions.replaceChildren();
+      document.getElementById("loading").hidden = false;
+      try {
+        quiz = await request("/api/quiz");
+        document.getElementById("quiz-summary").textContent = `${quiz.questions.length} questions / ${quiz.questions.length} points`;
+        quiz.questions.forEach((question, index) => {
+          const fieldset = document.createElement("fieldset");
+          const legend = document.createElement("legend");
+          legend.textContent = `${index + 1}. ${question.text}`;
+          fieldset.append(legend);
+          if (question.type === "text") {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "text";
+            input.id = `answer-${index}`;
+            input.name = `question-${index}`;
+            input.maxLength = 80;
+            input.required = true;
+            input.autocomplete = "off";
+            input.spellcheck = false;
+            label.htmlFor = input.id;
+            label.textContent = "Le mot manquant";
+            fieldset.append(label, input);
+          } else question.options.forEach((option, choice) => {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = `question-${index}`;
+            input.value = choice;
+            input.required = true;
+            label.append(input, document.createTextNode(option));
+            fieldset.append(label);
+          });
+          questions.append(fieldset);
+        });
+        submit.disabled = false;
+      } catch (err) {
+        error.textContent = err.message;
+        retry.hidden = false;
+      } finally {
+        document.getElementById("loading").hidden = true;
+      }
+    }
+
+    async function loadRanking() {
+      const refresh = document.getElementById("refresh");
+      const status = document.getElementById("ranking-status");
+      refresh.disabled = true;
+      status.textContent = "Chargement...";
+      try {
+        const data = await request("/api/scores");
+        const ranking = document.getElementById("ranking");
+        ranking.replaceChildren();
+        data.scores.forEach((score, index) => {
+          const row = document.createElement("tr");
+          for (const value of [index + 1, score.player, `${score.score}/${score.total}`]) {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.append(cell);
+          }
+          ranking.append(row);
+        });
+        status.textContent = data.scores.length ? "Les 100 meilleurs resultats" : "Aucune partie pour le moment.";
+      } catch (err) { status.textContent = err.message; }
+      finally { refresh.disabled = false; }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const player = document.getElementById("player").value.trim();
+      if (!player) { error.textContent = "Entre un pseudo."; return; }
+      const answers = quiz.questions.map((question, index) => {
+        const value = form.elements[`question-${index}`].value;
+        return question.type === "text" ? value.trim() : Number(value);
+      });
+      if (answers.some(answer => typeof answer === "string" && !answer)) {
+        error.textContent = "Complete tous les textes a trous.";
+        return;
+      }
+      submit.disabled = true;
+      submit.textContent = "Correction...";
+      error.textContent = "";
+      questions.querySelectorAll("fieldset").forEach(fieldset => { fieldset.disabled = true; });
+      try {
+        const data = await request("/api/scores", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ player, quizId: quiz.quizId, answers }),
+        });
+        result.hidden = false;
+        const title = document.createElement("strong");
+        title.textContent = `${data.player}, ton score : ${data.score}/${data.total}`;
+        result.replaceChildren(title);
+        data.results.forEach((answer, index) => {
+          const correction = document.createElement("p");
+          correction.className = `correction ${answer.correct ? "correct" : "incorrect"}`;
+          correction.textContent = `${answer.correct ? "Bonne reponse" : "A revoir"} : ${answer.correctAnswer}. ${answer.explanation}`;
+          questions.children[index].append(correction);
+        });
+        replay.hidden = false;
+        await loadRanking();
+      } catch (err) {
+        error.textContent = err.message;
+        submit.disabled = false;
+        questions.querySelectorAll("fieldset").forEach(fieldset => { fieldset.disabled = false; });
+      } finally { submit.textContent = "Valider mes reponses"; }
+    });
+    replay.addEventListener("click", loadQuiz);
+    retry.addEventListener("click", loadQuiz);
+    document.getElementById("refresh").addEventListener("click", loadRanking);
+    loadQuiz();
+    loadRanking();
+  </script>
+</body>
+</html>

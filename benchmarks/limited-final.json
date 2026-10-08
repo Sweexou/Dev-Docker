@@ -1,0 +1,385 @@
+{
+  "measuredAt": "2026-10-08T11:58:56.542Z",
+  "baseUrl": "http://127.0.0.1:3000",
+  "label": "limited-final",
+  "concurrency": 10,
+  "requestedSeconds": 30,
+  "elapsedSeconds": 30.0060645,
+  "requests": 15263,
+  "failures": 0,
+  "failureDetails": {},
+  "requestsPerSecond": 508.6638402713558,
+  "latencyMs": {
+    "median": 13.739999999999782,
+    "p95": 24.877399999999398,
+    "max": 1189.5731000000014
+  },
+  "resources": [
+    {
+      "service": "api",
+      "peakCpuPercent": 190.04,
+      "peakMemoryMiB": 39,
+      "cpuLimit": 2,
+      "memoryLimitMiB": 128
+    },
+    {
+      "service": "front",
+      "peakCpuPercent": 24.75,
+      "peakMemoryMiB": 19.76,
+      "cpuLimit": 0.25,
+      "memoryLimitMiB": 64
+    },
+    {
+      "service": "game-server",
+      "peakCpuPercent": 46.72,
+      "peakMemoryMiB": 65.16,
+      "cpuLimit": 0.5,
+      "memoryLimitMiB": 128
+    }
+  ],
+  "snapshots": [
+    {
+      "elapsedSeconds": 2.6295425,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "129.88%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "23.17%",
+          "MemUsage": "29.66MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "1.85MB / 1.77MB",
+          "PIDs": "6"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "19.16%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "26.97%",
+          "MemUsage": "17.26MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "21.3MB / 23.4MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "36.40%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "9.09%",
+          "MemUsage": "11.63MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "3.61MB / 14.2MB",
+          "PIDs": "7"
+        }
+      ]
+    },
+    {
+      "elapsedSeconds": 6.377148300000001,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "160.34%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "21.49%",
+          "MemUsage": "27.51MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "4.91MB / 4.69MB",
+          "PIDs": "6"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "13.31%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "28.51%",
+          "MemUsage": "18.25MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "23.4MB / 25.6MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "43.74%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "11.65%",
+          "MemUsage": "14.91MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "4.1MB / 16.2MB",
+          "PIDs": "7"
+        }
+      ]
+    },
+    {
+      "elapsedSeconds": 9.4000926,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "157.45%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "20.17%",
+          "MemUsage": "25.82MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "8.28MB / 7.92MB",
+          "PIDs": "6"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "21.93%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "28.64%",
+          "MemUsage": "18.33MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "27.3MB / 29.9MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "27.31%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "13.46%",
+          "MemUsage": "17.23MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "4.79MB / 18.9MB",
+          "PIDs": "7"
+        }
+      ]
+    },
+    {
+      "elapsedSeconds": 13.0930835,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "160.83%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "19.05%",
+          "MemUsage": "24.39MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "12.7MB / 12.2MB",
+          "PIDs": "7"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "22.31%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "28.87%",
+          "MemUsage": "18.48MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "31.4MB / 34.4MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "22.74%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "15.22%",
+          "MemUsage": "19.48MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "5.3MB / 20.9MB",
+          "PIDs": "7"
+        }
+      ]
+    },
+    {
+      "elapsedSeconds": 16.779866900000002,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "162.53%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "21.66%",
+          "MemUsage": "27.73MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "16.8MB / 16.1MB",
+          "PIDs": "6"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "14.99%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "29.28%",
+          "MemUsage": "18.74MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "34.1MB / 37.3MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "43.04%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "50.91%",
+          "MemUsage": "65.16MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "5.99MB / 23.6MB",
+          "PIDs": "14"
+        }
+      ]
+    },
+    {
+      "elapsedSeconds": 19.8101153,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "159.17%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "20.95%",
+          "MemUsage": "26.82MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "20.5MB / 19.6MB",
+          "PIDs": "5"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "22.95%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "28.68%",
+          "MemUsage": "18.36MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "38.7MB / 42.2MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "20.80%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "14.88%",
+          "MemUsage": "19.05MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "6.79MB / 26.8MB",
+          "PIDs": "7"
+        }
+      ]
+    },
+    {
+      "elapsedSeconds": 23.4957025,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "160.81%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "23.36%",
+          "MemUsage": "29.91MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "24.8MB / 23.7MB",
+          "PIDs": "8"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "24.75%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "30.53%",
+          "MemUsage": "19.54MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "42.7MB / 46.5MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "20.24%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "15.27%",
+          "MemUsage": "19.54MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "7.32MB / 28.9MB",
+          "PIDs": "7"
+        }
+      ]
+    },
+    {
+      "elapsedSeconds": 27.25973,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "190.04%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "30.47%",
+          "MemUsage": "39MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "27.1MB / 26MB",
+          "PIDs": "10"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "16.55%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "30.88%",
+          "MemUsage": "19.76MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "45.4MB / 49.5MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "46.72%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "15.84%",
+          "MemUsage": "20.28MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "7.97MB / 31.4MB",
+          "PIDs": "7"
+        }
+      ]
+    },
+    {
+      "elapsedSeconds": 30.2793471,
+      "rows": [
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "14.30%",
+          "Container": "d6902f0750f74c68a2c4f6919993936f5f0a0c1b7b92ca4c636ab1af3c2d5af0",
+          "ID": "d6902f0750f7",
+          "MemPerc": "21.49%",
+          "MemUsage": "27.51MiB / 128MiB",
+          "Name": "tp-api-1",
+          "NetIO": "29.8MB / 28.5MB",
+          "PIDs": "4"
+        },
+        {
+          "BlockIO": "0B / 8.19kB",
+          "CPUPerc": "24.45%",
+          "Container": "2ef69094f3143cf21ce0086512c7d1a119f4f919a075be528826dfa0dbbf518e",
+          "ID": "2ef69094f314",
+          "MemPerc": "30.70%",
+          "MemUsage": "19.65MiB / 64MiB",
+          "Name": "tp-front-1",
+          "NetIO": "47.3MB / 51.6MB",
+          "PIDs": "17"
+        },
+        {
+          "BlockIO": "0B / 0B",
+          "CPUPerc": "2.25%",
+          "Container": "bb67e5567c4c4c5c70c8dd5f673687ecb8b35821deb226976c160f4891247a01",
+          "ID": "bb67e5567c4c",
+          "MemPerc": "16.71%",
+          "MemUsage": "21.38MiB / 128MiB",
+          "Name": "tp-game-server-1",
+          "NetIO": "8.3MB / 32.8MB",
+          "PIDs": "7"
+        }
+      ]
+    }
+  ],
+  "scope": "Read-only GET /api/quiz, /api/game/status and /api/scores; excludes score writes, browser rendering and multiplayer. Docker stats sampled asynchronously; peaks are sampled observations, not absolute maxima."
+}
