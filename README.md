@@ -6,16 +6,18 @@ Browser -> NGINX front -> Python API -> Node game server
 
 ## Run with Docker
 
-The current compose.yaml sets ports, environment variables and resource limits
-directly. The local .env and .env.example are retained for a later configuration
-step; their values are not referenced by this version of Compose. Internal ports
-remain 80, 5000 and 4000. Keep DATABASE_PATH under /data to use the existing
-persistent volume. NGINX's upstream stays api:5000.
+Compose automatically reads the root .env file. .env.example lists the available
+settings: public front host/port, CPU/RAM ceilings, GAME_SERVER_URL and
+DATABASE_PATH. Defaults in compose.yaml also allow startup without .env.
+Only the explicitly declared environment entries are passed into containers;
+CPU/RAM and public port settings configure Docker itself. Internal ports remain
+80, 5000 and 4000. Keep DATABASE_PATH under /data to use the existing persistent
+volume. NGINX's upstream stays api:5000. .env remains ignored by Git.
 
 The front is bound to 127.0.0.1 by default. The API and game server have no
 published host ports and communicate over the existing game-network.
 
-Resource limits are configured directly in compose.yaml. See the section below
+Resource limits are configurable through .env. See the section below
 for their meaning and benchmarks/README.md for measurements and scope.
 
 ```powershell
@@ -29,12 +31,16 @@ The front image uses a multi-stage build: Node runs npm run build to prepare
 dist/, then only the static output is copied into the NGINX runtime image.
 The API calls game-server:4000. Only the front is published to the host.
 
-depends_on orders service startup but does not wait for services to be ready.
-Healthchecks and automatic restart policies are not enabled in this version.
+Healthchecks probe the front page, the API's /health route (including SQLite),
+and the game server's /status route every 10 seconds. Each check has a 5-second
+timeout, three retries and a 10-second start period. depends_on with
+service_healthy waits for the game server before starting the API, and for the
+API before starting the front. Checks continue after startup, but an unhealthy
+status does not restart a container automatically. Restart policies are not enabled.
 
 ## Limites CPU et RAM
 
-Les limites dans compose.yaml empechent un service de monopoliser les ressources
+Les limites configurees via .env et appliquees par compose.yaml empechent un service de monopoliser les ressources
 de la machine. Elles fixent des plafonds, pas une allocation reservee : un service
 au repos consomme seulement ce dont il a besoin.
 

@@ -1,35 +1,55 @@
 services:
   front:
     build: ./front
-    cpus: 0.25
-    mem_limit: 64m
+    cpus: "${FRONT_CPUS:-0.25}"
+    mem_limit: "${FRONT_MEMORY:-64m}"
     ports:
-      - "127.0.0.1:3000:80"
+      - "${FRONT_HOST:-127.0.0.1}:${FRONT_PORT:-3000}:80"
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - game-network
 
   api:
     build: ./api
-    cpus: 2.0
-    mem_limit: 128m
+    cpus: "${API_CPUS:-2.0}"
+    mem_limit: "${API_MEMORY:-128m}"
     environment:
-      GAME_SERVER_URL: http://game-server:4000
-      DATABASE_PATH: /data/quiz.db
+      GAME_SERVER_URL: "${GAME_SERVER_URL:-http://game-server:4000}"
+      DATABASE_PATH: "${DATABASE_PATH:-/data/quiz.db}"
     volumes:
       - quiz-data:/data
     depends_on:
-      - game-server
+      game-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:5000/health', timeout=3).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - game-network
 
   game-server:
     build: ./game-server
-    cpus: 0.5
-    mem_limit: 128m
+    cpus: "${GAME_CPUS:-0.5}"
+    mem_limit: "${GAME_MEMORY:-128m}"
     environment:
       PORT: "4000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/status', { signal: AbortSignal.timeout(3000) }).then(r => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1));"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - game-network
 
