@@ -1,6 +1,8 @@
 services:
   front:
     build: ./front
+    cpus: 0.25
+    mem_limit: 64m
     ports:
       - "127.0.0.1:3000:80"
     depends_on:
@@ -10,6 +12,8 @@ services:
 
   api:
     build: ./api
+    cpus: 2.0
+    mem_limit: 128m
     environment:
       GAME_SERVER_URL: http://game-server:4000
       DATABASE_PATH: /data/quiz.db
@@ -22,6 +26,8 @@ services:
 
   game-server:
     build: ./game-server
+    cpus: 0.5
+    mem_limit: 128m
     environment:
       PORT: "4000"
     networks:
