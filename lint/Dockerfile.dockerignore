@@ -1,0 +1,10 @@
+**
+!lint/
+lint/**
+!lint/Dockerfile
+!lint/package.json
+!lint/package-lock.json
+!lint/requirements.txt
+!lint/eslint.config.mjs
+!lint/ruff.toml
+!lint/run.mjs

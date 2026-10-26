@@ -1,0 +1,16 @@
+name: docker-quiz-lint
+
+services:
+  lint:
+    build:
+      context: .
+      dockerfile: lint/Dockerfile
+    cpus: "${LINT_CPUS:-1.0}"
+    mem_limit: "${LINT_MEMORY:-256m}"
+    network_mode: none
+    volumes:
+      - ./front:/workspace/front:ro
+      - ./api:/workspace/api:ro
+      - ./game-server:/workspace/game-server:ro
+      - ./scripts:/workspace/scripts:ro
+      - ./server.js:/workspace/server.js:ro
