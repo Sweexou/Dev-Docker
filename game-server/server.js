@@ -21,12 +21,14 @@ const server = http.createServer(async (req, res) => {
   }
   if (req.method === "POST" && pathname === "/quiz/grade") {
     try {
-      let body = "";
+      const chunks = [];
+      let size = 0;
       for await (const chunk of req) {
-        body += chunk.toString();
-        if (Buffer.byteLength(body) > 4096) return send(413, { error: "Requete trop volumineuse" });
+        size += chunk.length;
+        if (size > 4096) return send(413, { error: "Requete trop volumineuse" });
+        chunks.push(chunk);
       }
-      const data = JSON.parse(body);
+      const data = JSON.parse(Buffer.concat(chunks).toString("utf-8"));
       if (data?.quizId !== quiz.id) return send(400, { error: "Quiz inconnu : rechargez la page" });
       if (!Array.isArray(data.answers) || data.answers.length !== quiz.questions.length ||
           data.answers.some((answer, index) => {

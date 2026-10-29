@@ -5,7 +5,7 @@ import signal
 import threading
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.error import HTTPError, URLError
+from urllib.error import HTTPError
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
@@ -33,7 +33,10 @@ def initialize_database():
 
 class Handler(BaseHTTPRequestHandler):
     def request_game(self, path, payload=None):
-        body = json.dumps(payload).encode("utf-8") if payload is not None else None
+        body = (
+            json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            if payload is not None else None
+        )
         request = Request(
             f"{GAME_SERVER_URL.rstrip('/')}{path}",
             data=body,
@@ -56,7 +59,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/quiz":
             try:
                 self.send_json(200, self.request_game("/quiz"))
-            except (URLError, TimeoutError, OSError, ValueError):
+            except (OSError, ValueError):
                 self.send_json(502, {"error": "Le serveur de jeu est indisponible"})
             return
         if path in ("/health", "/api/scores"):
@@ -81,7 +84,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             game = self.request_game("/status")
             self.send_json(200, {"message": "Hello from Python API", "game": game})
-        except (HTTPError, URLError, TimeoutError, OSError, ValueError):
+        except (OSError, ValueError):
             self.send_json(502, {"error": "Game server is unavailable"})
 
     def do_POST(self):
@@ -90,8 +93,11 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))
-            if not 0 < length <= 4096:
-                self.send_json(400, {"error": "Body must contain 1 to 4096 bytes"})
+            if length > 4096:
+                self.send_json(413, {"error": "Requete trop volumineuse (4096 octets maximum)"})
+                return
+            if length <= 0:
+                self.send_json(400, {"error": "Request body is required"})
                 return
             data = json.loads(self.rfile.read(length))
             if not isinstance(data, dict):
@@ -101,7 +107,9 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError()
             if not isinstance(data.get("answers"), list) or not isinstance(data.get("quizId"), str):
                 raise ValueError()
-        except (ValueError, UnicodeDecodeError):
+            # JSON escapes can contain lone surrogates that UTF-8 and SQLite reject.
+            json.dumps(data, ensure_ascii=False).encode("utf-8")
+        except ValueError:
             self.send_json(400, {"error": "Pseudo (1-50 caracteres), quizId et reponses requis"})
             return
         try:
@@ -110,15 +118,17 @@ class Handler(BaseHTTPRequestHandler):
             })
             score = result["score"]
         except HTTPError as error:
-            if error.code == 400:
+            if error.code in (400, 413):
                 try:
-                    self.send_json(400, json.load(error))
+                    self.send_json(error.code, json.load(error))
                 except ValueError:
-                    self.send_json(400, {"error": "Reponses invalides"})
+                    self.send_json(error.code, {
+                        "error": "Requete trop volumineuse" if error.code == 413 else "Reponses invalides",
+                    })
             else:
                 self.send_json(502, {"error": "Le serveur de jeu est indisponible"})
             return
-        except (URLError, TimeoutError, OSError, ValueError, KeyError):
+        except (OSError, ValueError, KeyError):
             self.send_json(502, {"error": "Le serveur de jeu est indisponible"})
             return
         try:

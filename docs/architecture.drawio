@@ -88,7 +88,7 @@
         <mxCell id="lint-host" value="Host machine / Docker" style="whiteSpace=wrap;html=1;strokeWidth=2;fontSize=15;spacing=12;fillColor=#F8FAFC;strokeColor=#9AA7B2;align=left;verticalAlign=top;spacingTop=16;spacingLeft=20;fontSize=18;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="20" y="160" width="1160" height="600" as="geometry" />
         </mxCell>
-        <mxCell id="lint-sources" value="&lt;b&gt;Repository sources&lt;/b&gt;&lt;br&gt;&lt;br&gt;front/ (JS + HTML scripts)&lt;br&gt;api/ (Python)&lt;br&gt;game-server/ (JS)&lt;br&gt;scripts/, tests/ and server.js" style="whiteSpace=wrap;html=1;strokeWidth=2;fontSize=15;spacing=12;rounded=1;arcSize=8;fillColor=#D9EAF7;strokeColor=#3876A3;" vertex="1" parent="1">
+        <mxCell id="lint-sources" value="&lt;b&gt;Repository sources&lt;/b&gt;&lt;br&gt;&lt;br&gt;front/ (JS + HTML scripts)&lt;br&gt;api/ (Python)&lt;br&gt;game-server/ (JS)&lt;br&gt;scripts/ and tests/" style="whiteSpace=wrap;html=1;strokeWidth=2;fontSize=15;spacing=12;rounded=1;arcSize=8;fillColor=#D9EAF7;strokeColor=#3876A3;" vertex="1" parent="1">
           <mxGeometry x="60" y="300" width="280" height="220" as="geometry" />
         </mxCell>
         <mxCell id="lint-container" value="&lt;b&gt;LINT CONTAINER&lt;/b&gt;&lt;br&gt;node:20-alpine + custom tooling&lt;br&gt;&lt;br&gt;ESLint + HTML script plugin&lt;br&gt;Ruff for Python&lt;br&gt;USER node | /workspace&lt;br&gt;1 CPU | 256 MiB (defaults)" style="whiteSpace=wrap;html=1;strokeWidth=2;fontSize=15;spacing=12;rounded=1;arcSize=8;fillColor=#FFF2CC;strokeColor=#B59B32;" vertex="1" parent="1">
