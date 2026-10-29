@@ -13,4 +13,5 @@ services:
       - ./api:/workspace/api:ro
       - ./game-server:/workspace/game-server:ro
       - ./scripts:/workspace/scripts:ro
+      - ./tests:/workspace/tests:ro
       - ./server.js:/workspace/server.js:ro

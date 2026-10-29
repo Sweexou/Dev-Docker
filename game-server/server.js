@@ -1,7 +1,7 @@
 const http = require("node:http");
 const quiz = require("./questions");
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 4000;
 const startedAt = new Date().toISOString();
 const normalize = value => value.trim().toLowerCase();
 

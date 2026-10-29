@@ -11,7 +11,7 @@ from urllib.request import Request, urlopen
 
 
 PORT = int(os.environ.get("PORT", "5000"))
-GAME_SERVER_URL = os.environ.get("GAME_SERVER_URL", "http://127.0.0.1:3001")
+GAME_SERVER_URL = os.environ.get("GAME_SERVER_URL", "http://127.0.0.1:4000")
 DATABASE_PATH = Path(os.environ.get("DATABASE_PATH", str(Path(__file__).with_name("quiz.db"))))
 
 
@@ -79,8 +79,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(404, {"error": "Not found"})
             return
         try:
-            with urlopen(f"{GAME_SERVER_URL.rstrip('/')}/status", timeout=5) as response:
-                game = json.load(response)
+            game = self.request_game("/status")
             self.send_json(200, {"message": "Hello from Python API", "game": game})
         except (HTTPError, URLError, TimeoutError, OSError, ValueError):
             self.send_json(502, {"error": "Game server is unavailable"})

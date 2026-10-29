@@ -139,7 +139,7 @@ custom build-time `ARG` declarations.
 | `GAME_SERVER_URL` | `http://game-server:4000` | Python environment: upstream game-server address. |
 | `DATABASE_PATH` | `/data/quiz.db` | Python environment: SQLite path, which must stay under `/data` for persistence. |
 
-Compose also sets `PORT=4000` for Node; its non-Docker default is 3001. The
+The game server defaults to port 4000 in Docker and local development; the
 Python API defaults to 5000. Internal ports are fixed in this stack: changing
 one also requires updating its callers and healthcheck. `FRONT_PORT` changes
 only the host mapping.
@@ -259,7 +259,7 @@ from either tool.
 
 ### Lint Isolation and Configuration
 
-The application directories, benchmark scripts, and root `server.js` are
+The application directories, benchmark scripts, tests, and root `server.js` are
 mounted read-only. The container receives neither the SQLite volume, `.env`,
 nor the Docker socket. Generated `dist/` and `node_modules/` directories are
 ignored by ESLint; Ruff runs without a cache. Rules are defined in
@@ -279,6 +279,75 @@ docker compose -f compose.lint.yaml down
 Tool references: [ESLint](https://eslint.org/docs/latest/use/),
 [HTML script linting](https://github.com/BenoitZugmeyer/eslint-plugin-html),
 and [Ruff installation](https://docs.astral.sh/ruff/installation/).
+
+## Test Container
+
+The second CI job runs functional integration tests against a separate copy of
+the three application services. It uses the `docker-quiz-test` Compose project:
+
+```powershell
+docker compose -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from test
+```
+
+Compose waits for the game server, API, and front healthchecks before launching
+the one-shot `test` service. `--exit-code-from test` returns the test result to
+the caller: `0` on success and `1` for a failed assertion or test error. The
+other application services are stopped when the job exits. There are no host
+port mappings, so the normal quiz stack can run at the same time.
+
+`compose.test.yaml` reuses application definitions through `extends`, resets
+the front's published ports with `!reset []`, and forces test API addresses and
+the database path. Use a current Docker Compose plugin supporting `!reset`.
+Its network and `quiz-data` volume are scoped to the test project. Test scores
+never enter the normal project's volume. Keep the test project name distinct
+when using `-p` or `COMPOSE_PROJECT_NAME` overrides.
+
+Start each run with a fresh test volume by cleaning up the previous run:
+
+```powershell
+docker compose -f compose.test.yaml down -v
+```
+
+This command removes only the test project's resources when invoked with its
+default project name; it does not remove normal application scores. Run it
+after the job too when the test results and logs are no longer needed.
+
+### Test Image, Resources, and Coverage
+
+`tests/Dockerfile` customizes `python:3.11-alpine` with the test source. Python's
+standard-library `unittest`, `urllib`, JSON, OS, and UUID modules provide the
+runner, HTTP client, assertions, configuration, and unique test nicknames.
+There are no pip dependencies or extra OS packages to install.
+
+`WORKDIR /tests` creates/selects the source directory. `addgroup` and `adduser`
+create the unprivileged `tester` account; `USER tester` selects it for runtime.
+Copied source stays root-owned and readable by that user. The `.dockerignore`
+allows only the test module into the build context. No source bind mounts,
+database mounts, or Docker socket are given to the test container.
+
+The exec-form `CMD ["python", "-m", "unittest", "discover", "-v"]` runs Python
+directly in the foreground without a shell or custom entrypoint. Completion
+ends the container; Docker can send termination signals directly to Python.
+`PYTHONDONTWRITEBYTECODE=1` prevents source-directory cache writes, and
+`PYTHONUNBUFFERED=1` makes CI output appear immediately.
+
+The test service uses `TEST_CPUS` (default `1.0`) and `TEST_MEMORY` (default
+`128m`) as ceilings. This sequential HTTP client needs no reserved CPU cores;
+these budgets bound the lightweight Python runner independently of the
+application limits inherited from `compose.yaml`. `TEST_BASE_URL=http://front`
+is passed to the runner; each HTTP request has a 10-second timeout.
+
+The nine tests cover front HTML serving, quiz schema and solution redaction,
+perfect/mixed/incorrect grading, text normalization, rejection of a forged
+client score, saved-score retrieval, leaderboard ordering, invalid inputs
+without database writes, cross-service status, and unknown routes. Expected
+answers are an independent fixture in `tests/test_integration.py`; review it
+when changing questions or the quiz ID. Score storage is checked through a
+later HTTP request; container-recreation persistence and browser interactions
+are not covered by this suite.
+
+The editable architecture diagram includes a **Tests CI** tab for this job.
+Lint and tests remain separate containers and can be invoked independently.
 
 ## Benchmark
 
@@ -306,6 +375,6 @@ node front/server.js
 ```
 
 The optional Node front is only used for local development. Default ports are
-3000 for the front, 5000 for the API, and 3001 for the game server. Local SQLite
+3000 for the front, 5000 for the API, and 4000 for the game server. Local SQLite
 data is stored beside `api/server.py` unless `DATABASE_PATH` is set. The
 standard-library Python HTTP server is intended for this demo, not production.

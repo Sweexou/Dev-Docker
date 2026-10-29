@@ -6,7 +6,7 @@ const checks = [
     "front/**/*.js", "front/**/*.html", "game-server/**/*.js", "scripts/**/*.js",
     "server.js",
   ]],
-  ["Python", "/opt/venv/bin/ruff", ["check", "--no-cache", "--config", "/opt/lint/ruff.toml", "api"]],
+  ["Python", "/opt/venv/bin/ruff", ["check", "--no-cache", "--config", "/opt/lint/ruff.toml", "api", "tests"]],
 ];
 
 let failed = false;

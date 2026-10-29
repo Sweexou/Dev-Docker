@@ -1,0 +1,39 @@
+name: docker-quiz-test
+
+services:
+  game-server:
+    extends:
+      file: compose.yaml
+      service: game-server
+
+  api:
+    extends:
+      file: compose.yaml
+      service: api
+    environment:
+      GAME_SERVER_URL: http://game-server:4000
+      DATABASE_PATH: /data/quiz.db
+
+  front:
+    extends:
+      file: compose.yaml
+      service: front
+    ports: !reset []
+
+  test:
+    build: ./tests
+    cpus: "${TEST_CPUS:-1.0}"
+    mem_limit: "${TEST_MEMORY:-128m}"
+    environment:
+      TEST_BASE_URL: http://front
+    depends_on:
+      front:
+        condition: service_healthy
+    networks:
+      - game-network
+
+networks:
+  game-network:
+
+volumes:
+  quiz-data:
