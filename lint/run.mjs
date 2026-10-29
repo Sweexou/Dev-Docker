@@ -4,7 +4,6 @@ const checks = [
   ["JavaScript et scripts HTML", "/opt/lint/node_modules/.bin/eslint", [
     "--config", "/opt/lint/eslint.config.mjs", "--max-warnings", "0",
     "front/**/*.js", "front/**/*.html", "game-server/**/*.js", "scripts/**/*.js",
-    "server.js",
   ]],
   ["Python", "/opt/venv/bin/ruff", ["check", "--no-cache", "--config", "/opt/lint/ruff.toml", "api", "tests"]],
 ];

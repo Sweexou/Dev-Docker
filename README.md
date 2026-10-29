@@ -6,7 +6,8 @@ surrounding whitespace. Each correct answer earns one point.
 
 ## Quick Start
 
-Requires Docker with the Compose plugin. Run from the repository root:
+Requires Docker with the Compose plugin. Start all three application services
+from the repository root:
 
 ```powershell
 docker compose up --build -d --wait
@@ -259,7 +260,7 @@ from either tool.
 
 ### Lint Isolation and Configuration
 
-The application directories, benchmark scripts, tests, and root `server.js` are
+The application directories, benchmark scripts, and tests are
 mounted read-only. The container receives neither the SQLite volume, `.env`,
 nor the Docker socket. Generated `dist/` and `node_modules/` directories are
 ignored by ESLint; Ruff runs without a cache. Rules are defined in
